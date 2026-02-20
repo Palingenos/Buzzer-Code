@@ -53,8 +53,13 @@ def handle_call():
 
     if normalize_phone(caller) == normalize_phone(BUZZER_NUMBER):
         logger.info("Buzzer number detected — sending DTMF '%s'", DTMF_DIGIT)
-        resp.pause(length=PAUSE_SECONDS)
-        resp.play(digits=f"w{DTMF_DIGIT}")
+        if PAUSE_SECONDS > 0:
+            resp.pause(length=PAUSE_SECONDS)
+        resp.play(digits=DTMF_DIGIT)
+        resp.pause(length=1)
+        resp.play(digits=DTMF_DIGIT)
+        resp.pause(length=1)
+        resp.play(digits=DTMF_DIGIT)
         resp.pause(length=2)
         resp.hangup()
         send_notification(caller)

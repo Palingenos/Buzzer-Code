@@ -5,25 +5,22 @@ Automatically opens your door buzzer by detecting the intercom's incoming call a
 ## How It Works
 
 ```
-Buzzer calls your phone
+Buzzer calls your phone number
         │
         ▼
-iPhone silences the call (silent ringtone on buzzer contact)
+Call is instantly forwarded to Twilio (unconditional forwarding)
         │
         ▼
-After a few rings → call forwards to your Twilio number
+Twilio webhook (this server) answers immediately
         │
         ▼
-Twilio webhook (this server) answers the call
-        │
-        ▼
-Detects buzzer caller ID → sends DTMF "9"
+Detects buzzer caller ID → sends DTMF "9" (x3 for reliability)
         │
         ▼
 Door opens. You get an SMS notification.
 ```
 
-Non-buzzer calls are forwarded back to your phone normally.
+Non-buzzer calls are forwarded through to your phone normally.
 
 ---
 
@@ -88,50 +85,36 @@ If you don't know the exact number your buzzer calls from:
 2. It may show as a local number or a number with an area code
 3. Include the full number with country code (e.g., `+14155551234`)
 
-### Step 5: Set Up iPhone Call Forwarding
+### Step 5: Set Up iPhone Call Forwarding (Unconditional)
 
-You need "no answer" call forwarding so unanswered calls go to Twilio.
+Forward **all** calls to Twilio so the buzzer call goes directly there with no delay.
 
-#### Using carrier codes (works on most carriers):
+#### On iPhone:
+
+Go to **Settings → Phone → Call Forwarding** → toggle it **ON** → enter your Twilio phone number.
+
+#### Or using carrier codes:
 
 Open the **Phone** app and dial:
 
 ```
-*61*YOUR_TWILIO_NUMBER*11*10#
+*21*YOUR_TWILIO_NUMBER#
 ```
 
-Replace `YOUR_TWILIO_NUMBER` with your Twilio number (digits only, e.g., `*61*14155559999*11*10#`).
-
-The `*11*10` part sets it to forward after ~10 seconds (2 rings). Adjust if needed:
-- `*11*5` = ~1 ring
-- `*11*10` = ~2 rings
-- `*11*15` = ~3 rings
-- `*11*20` = ~4 rings
+Replace `YOUR_TWILIO_NUMBER` with your Twilio number (digits only, e.g., `*21*14155559999#`).
 
 > **Note:** This varies by carrier. If the code above doesn't work:
-> - **AT&T / T-Mobile:** The `*61*` code usually works
-> - **Verizon:** Go to My Verizon app → call forwarding settings
-> - **Other carriers:** Contact your carrier or check their website for "conditional call forwarding" instructions
+> - **AT&T / T-Mobile:** The `*21*` code usually works
+> - **Verizon:** Go to My Verizon app → call forwarding settings, or dial `*72` followed by the number
+> - **Other carriers:** Contact your carrier or check their website for "unconditional call forwarding"
 
-To **disable** forwarding later: dial `##61#`
+To **disable** forwarding later: dial `##21#` (or toggle off in Settings → Phone → Call Forwarding)
 
-#### Important: This forwards ALL unanswered calls to Twilio
+#### How this works with regular calls
 
-The server handles this correctly:
-- **Buzzer calls** → auto-answers with DTMF "9"
-- **All other calls** → forwards them to your phone (you'll still get them)
-
-### Step 6: Silence the Buzzer Contact on iPhone
-
-So the buzzer call doesn't ring your phone (and goes straight to forwarding):
-
-1. Open **Contacts**
-2. Find (or create) the buzzer's contact
-3. Tap **Edit**
-4. Tap **Ringtone** → select **None** (or download a silent ringtone)
-5. Also set **Text Tone** → **None**
-
-Alternatively, go to the contact and enable **Silence** (iOS 17+) to send their calls directly to voicemail/forwarding.
+All calls now go through Twilio, but the server handles them correctly:
+- **Buzzer calls** → auto-answers with DTMF "9", door opens instantly
+- **All other calls** → Twilio forwards them to your phone, so you still receive them normally
 
 ---
 
