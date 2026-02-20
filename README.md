@@ -1,6 +1,6 @@
 # Buzzer Automation
 
-Automatically opens your door buzzer by detecting the intercom's incoming call and sending a DTMF tone — no manual interaction needed.
+Automatically opens your door buzzer by detecting the intercom's incoming call and sending a DTMF tone without any manual interaction
 
 ## How It Works
 
@@ -8,7 +8,7 @@ Automatically opens your door buzzer by detecting the intercom's incoming call a
 Buzzer calls your phone number
         │
         ▼
-Call is instantly forwarded to Twilio (unconditional forwarding)
+Call is instantly forwarded to Twilio (conditional forwarding)
         │
         ▼
 Twilio webhook (this server) answers immediately
@@ -17,7 +17,7 @@ Twilio webhook (this server) answers immediately
 Detects buzzer caller ID → sends DTMF "9" (x3 for reliability)
         │
         ▼
-Door opens. You get an SMS notification.
+Door opens. (Might add SMS Notification feature in newer version)
 ```
 
 Non-buzzer calls are forwarded through to your phone normally.
@@ -26,89 +26,32 @@ Non-buzzer calls are forwarded through to your phone normally.
 
 ## Setup Guide
 
-### Step 1: Twilio Account & Number
+### Steps!
+### Step 1: Getting a Twilio Account
+1. Sign up for a twilio number
+2. Note your account SID, Auth Token and Twilio Phone Numbner
 
-1. Sign up at [twilio.com](https://www.twilio.com/try-twilio) (free trial gives you $15 credit)
-2. Buy a phone number (~$1.15/month) from the Twilio console
-3. Note your **Account SID**, **Auth Token**, and **Twilio phone number**
+### Step 2: Deploy The Server
 
-### Step 2: Deploy This Server
+You need the server running on a public URL. I'm choosing render since I used that for hackathon recently.
 
-You need this server running on a public URL. Choose one:
-
-#### Option A: Railway (easiest, free tier available)
-
-1. Push this code to a GitHub repo
-2. Go to [railway.app](https://railway.app), create a new project from the repo
-3. Add environment variables (see `.env.example`)
-4. Railway gives you a public URL like `https://your-app.up.railway.app`
-
-#### Option B: Render
-
-1. Push to GitHub
-2. Go to [render.com](https://render.com), create a new Web Service
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `gunicorn app:app`
-5. Add environment variables
-
-
-#### Option C: Local + ngrok (for testing)
-
-```bash
-pip install -r requirements.txt
-cp .env.example .env   # then edit .env with your values
-python app.py
-```
-
-In another terminal:
-```bash
-ngrok http 5000
-```
-
-Use the ngrok URL for the Twilio webhook.
+1. Create a new web service on render
+2. Set build command: `pip install -r requirements.txt`
+3. Set start command: `gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120`
+4. Add environment variables
 
 ### Step 3: Configure Twilio Webhook
 
-1. Go to [Twilio Console → Phone Numbers](https://console.twilio.com/us1/develop/phone-numbers/manage/incoming)
-2. Click your purchased number
-3. Under **Voice Configuration → A Call Comes In**:
-   - Set to **Webhook**
-   - URL: `https://YOUR-DOMAIN/voice`
-   - Method: **POST**
+1. Click your purchased number
+2. Under **Voice Configuration → A Call Comes In**:
+   - Set to Webhook
+   - URL: `https://thepublicurl.com`
+   - Method: POST
 4. Save
 
-### Step 4: Find Your Buzzer's Caller ID
+### Step 4: Set Up iPhone Call Forwarding (Conditional)
 
-If you don't know the exact number your buzzer calls from:
-
-1. Check your recent call history for the buzzer's calls
-2. It may show as a local number or a number with an area code
-3. Include the full number with country code (e.g., `+14155551234`)
-
-### Step 5: Set Up iPhone Call Forwarding (Unconditional)
-
-Forward **all** calls to Twilio so the buzzer call goes directly there with no delay.
-
-#### On iPhone:
-
-Go to **Settings → Phone → Call Forwarding** → toggle it **ON** → enter your Twilio phone number.
-
-#### Or using carrier codes:
-
-Open the **Phone** app and dial:
-
-```
-*21*YOUR_TWILIO_NUMBER#
-```
-
-Replace `YOUR_TWILIO_NUMBER` with your Twilio number (digits only, e.g., `*21*14155559999#`).
-
-> **Note:** This varies by carrier. If the code above doesn't work:
-> - **AT&T / T-Mobile:** The `*21*` code usually works
-> - **Verizon:** Go to My Verizon app → call forwarding settings, or dial `*72` followed by the number
-> - **Other carriers:** Contact your carrier or check their website for "unconditional call forwarding"
-
-To **disable** forwarding later: dial `##21#` (or toggle off in Settings → Phone → Call Forwarding)
+I'm using koodo so after setting up the prepaid plan of $5, I used the activation code to forward calls to the Twilio number
 
 #### How this works with regular calls
 
@@ -133,17 +76,10 @@ All calls now go through Twilio, but the server handles them correctly:
 
 ---
 
-## Testing
-
-1. Once deployed, check the health endpoint: `https://YOUR-DOMAIN/health`
-2. Use [Twilio's test tools](https://console.twilio.com) to simulate an incoming call
-3. Or have someone buzz your apartment and verify the door opens
-
 ## Cost
 
-- **Twilio phone number:** ~$1.15/month
-- **Incoming calls:** ~$0.0085/min (a 10-second buzzer call costs less than $0.01)
-- **SMS notifications:** ~$0.0079/message
-- **Hosting:** Free tier on Railway/Render is sufficient
+- **Twilio phone number:** ~$1.15 USD/month (But on trial plan so $0 for current version since very small)
+- **Incoming calls:** ~$0.60 CAD/min (a 10-second buzzer call costs less than $0.01 CAD), but $5 flat charge
+- **Hosting:** Free tier on Render is sufficient for now
 
-Total: **~$1-2/month** for typical usage.
+Total: **~$5-6/month** for typical usage, for which the buzzer code is used almost 3-4 times daily, so a lot of saving.
