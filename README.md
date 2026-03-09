@@ -5,6 +5,8 @@ phone number. During this call, I can reject the call or accept the call and pre
 
 "Buzzing in" people is especially important due to the constant rain that vancouver is famous for as well as the viscious seagulls that rob any packages not claimed within a few minutes left outside. 
 
+![Buzzer System Image](Buzzer System Image.jpg)
+
 However, with a 4 person apartment which can have a lot of deliveries, especially during 
 university finals weeek, and recieving all of the buzzer code numbers to my number, I wondered:
 "Is there any way to automate this process so that calls I don't reject gets sent the same keypad tone and allows the guest access?"
