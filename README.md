@@ -5,7 +5,7 @@ phone number. During this call, I can reject the call or accept the call and pre
 
 "Buzzing in" people is especially important due to the constant rain that vancouver is famous for as well as the viscious seagulls that rob any packages not claimed within a few minutes left outside. 
 
-![Image](https://github.com/user-attachments/assets/9612e9dd-c9f9-48b8-82a9-04f06f0f64f0)
+![Image](https://github.com/user-attachments/assets/0d2ba64e-90bf-465f-8c24-f7343ccdd3d1)
 
 However, with a 4 person apartment which can have a lot of deliveries, especially during 
 university finals weeek, and recieving all of the buzzer code numbers to my number, I wondered:
