@@ -1,5 +1,6 @@
 # Buzzer Automation
 
+
 My building has a buzzer code system (See picture below) on which any guest has to enter a 4 digit pincode in order for it to send a call to my personal
 phone number. During this call, I can reject the call or accept the call and press 9 on the phone's keypad in order to give the guest access into the building and lift.
 
